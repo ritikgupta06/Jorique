@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
 import About from './pages/About';
+import Reviews from './pages/Reviews';
 
 function PageTransition({ children }: { children: React.ReactNode }) {
   return (
@@ -54,6 +55,14 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <About />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/reviews"
+          element={
+            <PageTransition>
+              <Reviews />
             </PageTransition>
           }
         />
