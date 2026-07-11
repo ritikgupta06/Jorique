@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, User, ShoppingBag, Menu, X } from 'lucide-react';
+import { Heart, User, ShoppingBag, Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
+import AuthModal from './AuthModal';
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -17,8 +19,12 @@ interface NavbarProps {
 export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { user, signOut, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -28,6 +34,7 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
 
   useEffect(() => {
     setMobileOpen(false);
+    setUserMenuOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -35,7 +42,39 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    if (userMenuOpen) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [userMenuOpen]);
+
   const transparent = isHome && !scrolled;
+
+  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Account';
+  const initials = displayName
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+  const handleAccountClick = () => {
+    if (loading) return;
+    if (user) {
+      setUserMenuOpen((v) => !v);
+    } else {
+      setAuthOpen(true);
+    }
+  };
+
+  const handleSignOut = async () => {
+    setUserMenuOpen(false);
+    await signOut();
+  };
 
   return (
     <>
@@ -99,14 +138,70 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
                   </span>
                 )}
               </button>
-              <button
-                aria-label="Account"
-                className={`p-1.5 transition-colors duration-200 ${
-                  transparent ? 'text-white/90 hover:text-white' : 'text-secondary hover:text-primary'
-                }`}
-              >
-                <User size={18} strokeWidth={1.5} />
-              </button>
+
+              {/* Account icon / user menu */}
+              <div className="relative" ref={userMenuRef}>
+                {user ? (
+                  <button
+                    onClick={handleAccountClick}
+                    aria-label="Account menu"
+                    className={`flex items-center gap-1.5 p-1 rounded-full transition-colors duration-200 ${
+                      transparent ? 'text-white/90 hover:text-white' : 'text-secondary hover:text-primary'
+                    }`}
+                  >
+                    <span
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold tracking-wider ${
+                        transparent ? 'bg-white/20 text-white' : 'bg-primary text-white'
+                      }`}
+                    >
+                      {initials}
+                    </span>
+                    <ChevronDown
+                      size={12}
+                      strokeWidth={2}
+                      className={`transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleAccountClick}
+                    aria-label="Sign in"
+                    className={`p-1.5 transition-colors duration-200 ${
+                      transparent ? 'text-white/90 hover:text-white' : 'text-secondary hover:text-primary'
+                    }`}
+                  >
+                    <User size={18} strokeWidth={1.5} />
+                  </button>
+                )}
+
+                {/* User dropdown */}
+                <AnimatePresence>
+                  {userMenuOpen && user && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95, y: -8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -8 }}
+                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute right-0 top-full mt-2.5 w-60 bg-white rounded-xl border border-border shadow-lg overflow-hidden"
+                    >
+                      <div className="px-4 py-4 border-b border-border">
+                        <p className="text-xs font-semibold text-primary truncate">{displayName}</p>
+                        <p className="text-[11px] text-secondary truncate mt-0.5">{user.email}</p>
+                      </div>
+                      <div className="p-2">
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium tracking-wide text-secondary hover:text-primary hover:bg-cream rounded-lg transition-colors duration-150"
+                        >
+                          <LogOut size={14} strokeWidth={1.5} />
+                          Sign Out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               <Link
                 to="/shop"
                 aria-label="Cart"
@@ -121,6 +216,7 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
                   </span>
                 )}
               </Link>
+
               <button
                 onClick={() => setMobileOpen(true)}
                 aria-label="Menu"
@@ -162,6 +258,22 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
                   <X size={20} strokeWidth={1.5} />
                 </button>
               </div>
+
+              {/* Mobile user info */}
+              {user && (
+                <div className="px-6 py-4 bg-cream border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-white">
+                      {initials}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-primary truncate">{displayName}</p>
+                      <p className="text-[11px] text-secondary truncate">{user.email}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <nav className="flex flex-col px-6 py-8 gap-1">
                 {navLinks.map((link, i) => (
                   <motion.div
@@ -181,13 +293,33 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
                   </motion.div>
                 ))}
               </nav>
-              <div className="mt-auto px-6 py-8">
-                <p className="text-xs text-secondary tracking-widest uppercase">Luxury Home Textiles</p>
+
+              <div className="mt-auto px-6 py-8 border-t border-border">
+                {user ? (
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2.5 text-xs font-medium tracking-widest uppercase text-secondary hover:text-primary transition-colors"
+                  >
+                    <LogOut size={14} strokeWidth={1.5} />
+                    Sign Out
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { setMobileOpen(false); setAuthOpen(true); }}
+                    className="w-full flex items-center gap-2.5 text-xs font-medium tracking-widest uppercase text-secondary hover:text-primary transition-colors"
+                  >
+                    <User size={14} strokeWidth={1.5} />
+                    Sign In / Register
+                  </button>
+                )}
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 }
