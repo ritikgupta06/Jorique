@@ -1,106 +1,105 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-interface LocalUser {
-  email: string;
-  user_metadata: { full_name: string };
-}
-
-interface StoredAccount {
-  email: string;
-  password: string;
-  fullName: string;
-}
+import type { AppUser } from '../types';
+import { loginRequest, meRequest, signupRequest, verifyOtpRequest } from '../lib/api';
 
 interface AuthContextValue {
-  user: LocalUser | null;
+  user: AppUser | null;
+  token: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    role?: AppUser['role']
+  ) => Promise<{ error: string | null; email?: string }>;
+  verifyOtp: (email: string, otp: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
-const ACCOUNTS_KEY = 'jorique_accounts';
-const SESSION_KEY = 'jorique_session';
+const TOKEN_KEY = 'jorique_auth_token';
 
-function getAccounts(): StoredAccount[] {
-  try {
-    return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) ?? '[]');
-  } catch {
-    return [];
-  }
-}
-
-function saveAccounts(accounts: StoredAccount[]) {
-  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
-}
-
-function getSession(): LocalUser | null {
-  try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveSession(user: LocalUser | null) {
-  if (user) {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(SESSION_KEY);
-  }
+function saveToken(token: string | null) {
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+  else localStorage.removeItem(TOKEN_KEY);
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<LocalUser | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setUser(getSession());
-    setLoading(false);
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+
+    async function restoreSession() {
+      if (!storedToken) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { user: restoredUser } = await meRequest(storedToken);
+        setUser(restoredUser);
+        setToken(storedToken);
+      } catch {
+        saveToken(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    restoreSession();
   }, []);
 
   const signIn = async (email: string, password: string): Promise<{ error: string | null }> => {
-    const accounts = getAccounts();
-    const found = accounts.find(
-      (a) => a.email.toLowerCase() === email.toLowerCase() && a.password === password
-    );
-    if (!found) {
-      return { error: 'Invalid email or password. Please try again.' };
+    try {
+      const result = await loginRequest(email, password);
+      setUser(result.user);
+      setToken(result.token);
+      saveToken(result.token);
+      return { error: null };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'Unable to sign in.' };
     }
-    const localUser: LocalUser = {
-      email: found.email,
-      user_metadata: { full_name: found.fullName },
-    };
-    saveSession(localUser);
-    setUser(localUser);
-    return { error: null };
   };
 
   const signUp = async (
     email: string,
     password: string,
-    fullName: string
-  ): Promise<{ error: string | null }> => {
-    const accounts = getAccounts();
-    const exists = accounts.some((a) => a.email.toLowerCase() === email.toLowerCase());
-    if (exists) {
-      return { error: 'An account with this email already exists. Please sign in.' };
+    fullName: string,
+    role: AppUser['role'] = 'user'
+  ): Promise<{ error: string | null; email?: string }> => {
+    try {
+      const result = await signupRequest(fullName, email, password, role);
+      return { error: null, email: result.email };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'Unable to create account.' };
     }
-    const newAccount: StoredAccount = { email, password, fullName };
-    saveAccounts([...accounts, newAccount]);
-    return { error: null };
+  };
+
+  const verifyOtp = async (email: string, otp: string): Promise<{ error: string | null }> => {
+    try {
+      const result = await verifyOtpRequest(email, otp);
+      setUser(result.user);
+      setToken(result.token);
+      saveToken(result.token);
+      return { error: null };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'Unable to verify OTP.' };
+    }
   };
 
   const signOut = async () => {
-    saveSession(null);
+    saveToken(null);
     setUser(null);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, token, loading, signIn, signUp, verifyOtp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

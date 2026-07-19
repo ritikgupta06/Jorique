@@ -6,6 +6,12 @@ import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
 import About from './pages/About';
 import Reviews from './pages/Reviews';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import VerifyOtp from './pages/VerifyOtp';
+import UserDashboard from './pages/UserDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function PageTransition({ children }: { children: React.ReactNode }) {
   return (
@@ -63,6 +69,50 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <Reviews />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PageTransition>
+              <Login />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PageTransition>
+              <Signup />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/verify-otp"
+          element={
+            <PageTransition>
+              <VerifyOtp />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PageTransition>
+              <ProtectedRoute role="user">
+                <UserDashboard />
+              </ProtectedRoute>
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PageTransition>
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
             </PageTransition>
           }
         />

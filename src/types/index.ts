@@ -19,3 +19,12 @@ export interface CartItem {
 export interface WishlistItem {
   product: Product;
 }
+
+export interface AppUser {
+  id: string;
+  email: string;
+  role: 'user' | 'admin';
+  isVerified: boolean;
+  fullName: string;
+  user_metadata: { full_name: string };
+}

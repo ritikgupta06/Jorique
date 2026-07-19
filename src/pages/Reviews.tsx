@@ -4,6 +4,8 @@ import { Star, Check, X, Filter, MessageSquare, ArrowUpDown } from 'lucide-react
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+type SortOption = 'recent' | 'highest' | 'lowest';
+
 // Define Review Interface
 interface Review {
   id: string;
@@ -109,7 +111,7 @@ const INITIAL_REVIEWS: Review[] = [
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>(INITIAL_REVIEWS);
   const [filterRating, setFilterRating] = useState<number | 'all'>('all');
-  const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
+  const [sortBy, setSortBy] = useState<SortOption>('recent');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [helpfulClicked, setHelpfulClicked] = useState<Record<string, boolean>>({});
 
@@ -358,7 +360,7 @@ export default function Reviews() {
             <span className="text-xs font-semibold text-secondary uppercase tracking-widest">Sort by:</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="text-xs font-medium text-primary bg-transparent border-b border-border py-1 focus:outline-none focus:border-primary cursor-pointer tracking-wider"
             >
               <option value="recent">Most Recent</option>

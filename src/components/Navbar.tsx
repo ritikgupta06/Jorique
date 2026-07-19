@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Heart, User, ShoppingBag, Menu, X, LogOut, ChevronDown } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Heart, User, ShoppingBag, Menu, X, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import AuthModal from './AuthModal';
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -20,10 +19,10 @@ interface NavbarProps {
 export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === '/';
   const { user, signOut, loading } = useAuth();
 
@@ -68,14 +67,17 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
     if (user) {
       setUserMenuOpen((v) => !v);
     } else {
-      setAuthOpen(true);
+      navigate('/login');
     }
   };
 
   const handleSignOut = async () => {
     setUserMenuOpen(false);
     await signOut();
+    navigate('/');
   };
+
+  const dashboardPath = user?.role === 'admin' ? '/admin' : '/dashboard';
 
   return (
     <>
@@ -190,6 +192,13 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
                         <p className="text-[11px] text-secondary truncate mt-0.5">{user.email}</p>
                       </div>
                       <div className="p-2">
+                        <Link
+                          to={dashboardPath}
+                          className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium tracking-wide text-secondary hover:text-primary hover:bg-cream rounded-lg transition-colors duration-150"
+                        >
+                          <LayoutDashboard size={14} strokeWidth={1.5} />
+                          Dashboard
+                        </Link>
                         <button
                           onClick={handleSignOut}
                           className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium tracking-wide text-secondary hover:text-primary hover:bg-cream rounded-lg transition-colors duration-150"
@@ -297,30 +306,37 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
 
               <div className="mt-auto px-6 py-8 border-t border-border">
                 {user ? (
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full flex items-center gap-2.5 text-xs font-medium tracking-widest uppercase text-secondary hover:text-primary transition-colors"
-                  >
-                    <LogOut size={14} strokeWidth={1.5} />
-                    Sign Out
-                  </button>
+                  <div className="space-y-4">
+                    <Link
+                      to={dashboardPath}
+                      className="w-full flex items-center gap-2.5 text-xs font-medium tracking-widest uppercase text-secondary hover:text-primary transition-colors"
+                    >
+                      <LayoutDashboard size={14} strokeWidth={1.5} />
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full flex items-center gap-2.5 text-xs font-medium tracking-widest uppercase text-secondary hover:text-primary transition-colors"
+                    >
+                      <LogOut size={14} strokeWidth={1.5} />
+                      Sign Out
+                    </button>
+                  </div>
                 ) : (
-                  <button
-                    onClick={() => { setMobileOpen(false); setAuthOpen(true); }}
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileOpen(false)}
                     className="w-full flex items-center gap-2.5 text-xs font-medium tracking-widest uppercase text-secondary hover:text-primary transition-colors"
                   >
                     <User size={14} strokeWidth={1.5} />
                     Sign In / Register
-                  </button>
+                  </Link>
                 )}
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
-
-      {/* Auth Modal */}
-      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 }
