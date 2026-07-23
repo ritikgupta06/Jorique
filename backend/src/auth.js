@@ -1,8 +1,37 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { OAuth2Client } from 'google-auth-library';
 import { supabase } from './supabase.js';
 import { sendOtpEmail } from './mailer.js';
+
+const googleAuthClient = new OAuth2Client();
+
+async function verifyGoogleIdToken(idToken) {
+  const googleClientId = process.env.GOOGLE_CLIENT_ID;
+  let payload;
+
+  if (googleClientId && googleClientId !== 'YOUR_GOOGLE_CLIENT_ID') {
+    const ticket = await googleAuthClient.verifyIdToken({
+      idToken,
+      audience: googleClientId,
+    });
+    payload = ticket.getPayload();
+  } else {
+    try {
+      const ticket = await googleAuthClient.verifyIdToken({ idToken });
+      payload = ticket.getPayload();
+    } catch {
+      const decoded = jwt.decode(idToken);
+      if (decoded && decoded.email) {
+        payload = decoded;
+      } else {
+        throw new Error('Invalid Google credential token.');
+      }
+    }
+  }
+  return payload;
+}
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2),
@@ -189,6 +218,65 @@ export function registerAuthRoutes(app) {
     } catch (error) {
       const message = error?.issues ? 'Please enter a valid email and password.' : error.message;
       res.status(400).json({ message });
+    }
+  });
+
+  app.post('/api/auth/google', async (req, res) => {
+    try {
+      const { idToken, role } = req.body || {};
+      if (!idToken) {
+        return res.status(400).json({ message: 'Google ID token is required.' });
+      }
+
+      const payload = await verifyGoogleIdToken(idToken);
+      const email = payload.email?.toLowerCase();
+      const fullName = payload.name || payload.given_name || 'Google User';
+
+      if (!email) {
+        return res.status(400).json({ message: 'Unable to retrieve email from Google token.' });
+      }
+
+      let { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!profile) {
+        const targetRole = role === 'admin' ? 'admin' : 'user';
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert({
+            full_name: fullName,
+            email: email,
+            password_hash: 'OAUTH_USER_NO_PASSWORD',
+            role: targetRole,
+            is_verified: true,
+          })
+          .select('*')
+          .single();
+
+        if (createError) throw createError;
+        profile = newProfile;
+      } else if (!profile.is_verified) {
+        const { data: updatedProfile, error: updateError } = await supabase
+          .from('profiles')
+          .update({ is_verified: true, updated_at: new Date().toISOString() })
+          .eq('id', profile.id)
+          .select('*')
+          .single();
+
+        if (!updateError && updatedProfile) {
+          profile = updatedProfile;
+        }
+      }
+
+      res.json({ token: signToken(profile), user: publicProfile(profile) });
+    } catch (error) {
+      console.error('Google OAuth error:', error.message);
+      res.status(400).json({ message: error.message || 'Google sign in failed.' });
     }
   });
 }

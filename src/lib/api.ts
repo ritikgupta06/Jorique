@@ -59,6 +59,13 @@ export function verifyOtpRequest(email: string, otp: string) {
   });
 }
 
+export function googleAuthRequest(idToken: string, role?: AppUser['role']) {
+  return apiRequest<AuthResponse>('/api/auth/google', {
+    method: 'POST',
+    body: JSON.stringify({ idToken, role }),
+  });
+}
+
 export function meRequest(token: string) {
   return apiRequest<{ user: AppUser }>('/api/auth/me', { token });
 }

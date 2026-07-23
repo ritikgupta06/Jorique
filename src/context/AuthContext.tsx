@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { AppUser } from '../types';
-import { loginRequest, meRequest, signupRequest, verifyOtpRequest } from '../lib/api';
+import { googleAuthRequest, loginRequest, meRequest, signupRequest, verifyOtpRequest } from '../lib/api';
 
 interface AuthContextValue {
   user: AppUser | null;
   token: string | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signInWithGoogle: (idToken: string, role?: AppUser['role']) => Promise<{ error: string | null }>;
   signUp: (
     email: string,
     password: string,
@@ -66,6 +67,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const signInWithGoogle = async (
+    idToken: string,
+    role: AppUser['role'] = 'user'
+  ): Promise<{ error: string | null }> => {
+    try {
+      const result = await googleAuthRequest(idToken, role);
+      setUser(result.user);
+      setToken(result.token);
+      saveToken(result.token);
+      return { error: null };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'Google sign in failed.' };
+    }
+  };
+
   const signUp = async (
     email: string,
     password: string,
@@ -99,7 +115,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, signIn, signUp, verifyOtp, signOut }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, signIn, signInWithGoogle, signUp, verifyOtp, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
