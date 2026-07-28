@@ -11,6 +11,7 @@ import Signup from './pages/Signup';
 import VerifyOtp from './pages/VerifyOtp';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import Connection from './pages/Connection';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function PageTransition({ children }: { children: React.ReactNode }) {
@@ -69,6 +70,22 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <Reviews />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/connection"
+          element={
+            <PageTransition>
+              <Connection />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/connect"
+          element={
+            <PageTransition>
+              <Connection />
             </PageTransition>
           }
         />

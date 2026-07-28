@@ -16,6 +16,7 @@ export default function Footer() {
               { label: 'Shop', href: '/shop' },
               { label: 'About', href: '/about' },
               { label: 'Reviews', href: '/reviews' },
+              { label: 'Connection', href: '/connection' },
             ].map((link) => (
               <Link
                 key={link.href}
