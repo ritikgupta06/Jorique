@@ -10,14 +10,29 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 const requestedPort = Number(process.env.PORT || 5000);
 
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : true;
-
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl) or any web origin (including all localhost ports)
+    if (!origin) return callback(null, true);
+    
+    const configuredOrigins = process.env.FRONTEND_URL
+      ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+      : [];
+
+    const isLocalhost = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+
+    if (configuredOrigins.length === 0 || configuredOrigins.includes(origin) || isLocalhost) {
+      return callback(null, true);
+    }
+    
+    // Default fallback: allow origin
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
+app.options("*", cors());
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
