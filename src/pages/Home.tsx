@@ -7,8 +7,7 @@ import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
 import { featuredProducts } from '../data/products';
 
-const HERO_IMAGE =
-  'https://images.pexels.com/photos/1743229/pexels-photo-1743229.jpeg?auto=compress&cs=tinysrgb&w=1800';
+const HERO_IMAGE = '/images/hero.png';
 
 const perks = [
   { icon: <Truck size={16} strokeWidth={1.5} />, label: 'Free Shipping' },
@@ -223,13 +222,13 @@ export default function Home() {
           <p className="text-sm text-secondary mb-8 leading-relaxed">
             Be the first to know about new collections, exclusive offers, and interior inspiration.
           </p>
-          <div className="flex gap-0">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 max-w-full">
             <input
               type="email"
               placeholder="Your email address"
-              className="flex-1 border border-border border-r-0 px-5 py-3.5 text-sm text-text placeholder:text-secondary/50 bg-white focus:outline-none focus:border-primary transition-colors duration-200"
+              className="w-full flex-1 border border-border sm:border-r-0 px-4 sm:px-5 py-3.5 text-sm text-text placeholder:text-secondary/50 bg-white focus:outline-none focus:border-primary transition-colors duration-200"
             />
-            <button className="bg-primary text-white text-xs font-medium tracking-widest uppercase px-6 py-3.5 hover:bg-[#2a2623] transition-colors duration-200 whitespace-nowrap">
+            <button className="w-full sm:w-auto bg-primary text-white text-xs font-medium tracking-widest uppercase px-6 py-3.5 hover:bg-[#2a2623] transition-colors duration-200 whitespace-nowrap shrink-0">
               Subscribe
             </button>
           </div>

@@ -10,7 +10,7 @@ export default function Footer() {
             JORIQUE
           </Link>
 
-          <nav className="flex items-center gap-8">
+          <nav className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-8 gap-y-2.5 w-full md:w-auto text-center px-2">
             {[
               { label: 'Home', href: '/' },
               { label: 'Shop', href: '/shop' },
@@ -21,7 +21,7 @@ export default function Footer() {
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-xs font-medium tracking-widest uppercase text-secondary hover:text-primary transition-colors duration-200"
+                className="text-xs font-medium tracking-wider sm:tracking-widest uppercase text-secondary hover:text-primary transition-colors duration-200"
               >
                 {link.label}
               </Link>
