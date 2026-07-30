@@ -171,7 +171,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.pexels.com/photos/6186813/pexels-photo-6186813.jpeg?auto=compress&cs=tinysrgb&w=1400"
+            src="/Products/1.jpg"
             alt="Transform your space"
             className="w-full h-full object-cover"
           />

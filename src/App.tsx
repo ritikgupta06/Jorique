@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
@@ -14,7 +15,27 @@ import AdminDashboard from './pages/AdminDashboard';
 import Connection from './pages/Connection';
 import ProtectedRoute from './components/ProtectedRoute';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname]);
+
+  return null;
+}
+
 function PageTransition({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -142,6 +163,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <AnimatedRoutes />
       </BrowserRouter>
     </AuthProvider>

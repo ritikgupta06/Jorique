@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Check, X, Filter, MessageSquare, ArrowUpDown } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { products } from '../data/products';
 
 type SortOption = 'recent' | 'highest' | 'lowest';
 
@@ -479,141 +480,143 @@ export default function Reviews() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="fixed inset-0 bg-black/45 backdrop-blur-sm z-50 flex items-center justify-center"
+              className="fixed inset-0 bg-black/45 backdrop-blur-sm z-50"
             />
 
-            {/* Modal Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 16 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-x-4 top-1/2 -translate-y-1/2 md:inset-x-auto md:w-full md:max-w-lg bg-white rounded-2xl z-50 border border-border shadow-xl overflow-hidden max-h-[85vh] flex flex-col"
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between px-6 py-5 border-b border-border flex-shrink-0">
-                <h3 className="text-sm font-semibold tracking-[0.2em] uppercase text-primary">Write a Review</h3>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 text-secondary hover:text-primary transition-colors"
-                >
-                  <X size={18} strokeWidth={1.5} />
-                </button>
-              </div>
-
-              {/* Success Screen */}
-              {formSuccess ? (
-                <div className="flex flex-col items-center justify-center p-12 text-center flex-1">
-                  <div className="w-12 h-12 bg-cream text-primary rounded-full flex items-center justify-center mb-4">
-                    <Check size={24} strokeWidth={1.5} />
-                  </div>
-                  <h4 className="text-lg font-light text-primary mb-2">Thank you!</h4>
-                  <p className="text-sm text-secondary leading-relaxed font-light">
-                    Your review has been successfully submitted and posted.
-                  </p>
+            {/* Modal Wrapper Container */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+              {/* Modal Box */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 16 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="relative w-full max-w-lg bg-white rounded-2xl border border-border shadow-xl overflow-hidden max-h-[85vh] flex flex-col pointer-events-auto"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-5 border-b border-border flex-shrink-0">
+                  <h3 className="text-sm font-semibold tracking-[0.2em] uppercase text-primary">Write a Review</h3>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="p-1.5 text-secondary hover:text-primary transition-colors"
+                  >
+                    <X size={18} strokeWidth={1.5} />
+                  </button>
                 </div>
-              ) : (
-                /* Form Body */
-                <form onSubmit={handleSubmitReview} className="p-6 overflow-y-auto flex-1 space-y-5">
-                  {/* Rating Selector */}
-                  <div>
-                    <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
-                      Your Rating *
-                    </label>
-                    <div className="flex gap-1.5 text-primary">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setFormRating(star)}
-                          className="hover:scale-110 transition-transform p-0.5"
-                        >
-                          <Star
-                            size={24}
-                            fill={star <= formRating ? 'currentColor' : 'none'}
-                            strokeWidth={1.5}
-                          />
-                        </button>
-                      ))}
+
+                {/* Success Screen */}
+                {formSuccess ? (
+                  <div className="flex flex-col items-center justify-center p-12 text-center flex-1">
+                    <div className="w-12 h-12 bg-cream text-primary rounded-full flex items-center justify-center mb-4">
+                      <Check size={24} strokeWidth={1.5} />
                     </div>
+                    <h4 className="text-lg font-light text-primary mb-2">Thank you!</h4>
+                    <p className="text-sm text-secondary leading-relaxed font-light">
+                      Your review has been successfully submitted and posted.
+                    </p>
                   </div>
+                ) : (
+                  /* Form Body */
+                  <form onSubmit={handleSubmitReview} className="p-6 overflow-y-auto flex-1 space-y-5">
+                    {/* Rating Selector */}
+                    <div>
+                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                        Your Rating *
+                      </label>
+                      <div className="flex gap-1.5 text-primary">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setFormRating(star)}
+                            className="hover:scale-110 transition-transform p-0.5"
+                          >
+                            <Star
+                              size={24}
+                              fill={star <= formRating ? 'currentColor' : 'none'}
+                              strokeWidth={1.5}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-                  {/* Name Input */}
-                  <div>
-                    <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
-                      Your Name *
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. Liam S."
-                      value={formName}
-                      onChange={(e) => setFormName(e.target.value)}
-                      className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
-                    />
-                  </div>
+                    {/* Name Input */}
+                    <div>
+                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                        Your Name *
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="e.g. Liam S."
+                        value={formName}
+                        onChange={(e) => setFormName(e.target.value)}
+                        className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
+                      />
+                    </div>
 
-                  {/* Product Selector */}
-                  <div>
-                    <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
-                      Product Purchased *
-                    </label>
-                    <select
-                      value={formProductName}
-                      onChange={(e) => setFormProductName(e.target.value)}
-                      className="w-full border border-border px-4 py-3 text-sm text-text bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
-                    >
-                      <option value="Organic Linen Duvet Cover Set">Organic Linen Duvet Cover Set</option>
-                      <option value="Mulberry Silk Pillowcase">Mulberry Silk Pillowcase</option>
-                      <option value="Classic Waffle Towel Set">Classic Waffle Towel Set</option>
-                      <option value="Crisp Percale Cotton Sheets">Crisp Percale Cotton Sheets</option>
-                      <option value="Cashmere Blend Throw">Cashmere Blend Throw</option>
-                      <option value="Linen Robe & Sheet Bundle">Linen Robe & Sheet Bundle</option>
-                    </select>
-                  </div>
+                    {/* Product Selector */}
+                    <div>
+                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                        Product Purchased *
+                      </label>
+                      <select
+                        value={formProductName}
+                        onChange={(e) => setFormProductName(e.target.value)}
+                        className="w-full border border-border px-4 py-3 text-sm text-text bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
+                      >
+                        {products.map((p) => (
+                          <option key={p.id} value={p.name}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  {/* Review Title Input */}
-                  <div>
-                    <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
-                      Review Title *
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="Summarize your experience"
-                      value={formTitle}
-                      onChange={(e) => setFormTitle(e.target.value)}
-                      className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
-                    />
-                  </div>
+                    {/* Review Title Input */}
+                    <div>
+                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                        Review Title *
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Summarize your experience"
+                        value={formTitle}
+                        onChange={(e) => setFormTitle(e.target.value)}
+                        className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
+                      />
+                    </div>
 
-                  {/* Review Body Input */}
-                  <div>
-                    <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
-                      Review *
-                    </label>
-                    <textarea
-                      required
-                      rows={4}
-                      placeholder="Write your review comments here..."
-                      value={formBody}
-                      onChange={(e) => setFormBody(e.target.value)}
-                      className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200 resize-none"
-                    />
-                  </div>
+                    {/* Review Body Input */}
+                    <div>
+                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                        Review *
+                      </label>
+                      <textarea
+                        required
+                        rows={4}
+                        placeholder="Write your review comments here..."
+                        value={formBody}
+                        onChange={(e) => setFormBody(e.target.value)}
+                        className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200 resize-none"
+                      />
+                    </div>
 
-                  {/* Submit Button */}
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      className="w-full bg-primary text-white text-xs font-medium tracking-widest uppercase py-4 hover:bg-[#2a2623] transition-colors duration-200"
-                    >
-                      Submit Review
-                    </button>
-                  </div>
-                </form>
-              )}
-            </motion.div>
+                    {/* Submit Button */}
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        className="w-full bg-primary text-white text-xs font-medium tracking-widest uppercase py-4 hover:bg-[#2a2623] transition-colors duration-200"
+                      >
+                        Submit Review
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>
