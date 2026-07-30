@@ -95,14 +95,6 @@ function AnimatedRoutes() {
           }
         />
         <Route
-          path="/connection"
-          element={
-            <PageTransition>
-              <Connection />
-            </PageTransition>
-          }
-        />
-        <Route
           path="/connect"
           element={
             <PageTransition>
