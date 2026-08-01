@@ -254,12 +254,57 @@ END:VCARD`;
             </button>
           </motion.div>
 
-          {/* Love Your Purchase Banner Card */}
+          {/* Call Us Section */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45 }}
             className="bg-[#FAF7F3] border border-[#E8DFC0]/80 rounded-2xl p-4 sm:p-5 shadow-sm mb-6"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E5DACD] items-center">
+              {/* Header column */}
+              <div className="sm:col-span-4 flex items-center gap-3 pb-3 sm:pb-0">
+                <div className="w-11 h-11 rounded-full bg-[#EFE6DA] flex items-center justify-center text-[#8C7047] shrink-0">
+                  <PhoneCall className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs sm:text-sm text-[#1C1817]">Call Us</h4>
+                  <p className="text-[11px] text-[#7A6E65]">We are here to help you</p>
+                </div>
+              </div>
+
+              {/* Phone Numbers */}
+              <div className="sm:col-span-8 flex flex-wrap items-center justify-around gap-3 pt-3 sm:pt-0 sm:pl-4 text-left sm:text-center">
+                <a
+                  href="tel:+919919388211"
+                  className="text-xs sm:text-sm font-bold text-[#1C1817] hover:text-[#8C7047] transition-colors block"
+                >
+                  +91 99193 88211
+                </a>
+                <a
+                  href="tel:+918840196009"
+                  className="text-xs sm:text-sm font-bold text-[#1C1817] hover:text-[#8C7047] transition-colors block"
+                >
+                  +91 88401 96009
+                </a>
+                <a
+                  href="https://wa.me/919026260421"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs sm:text-sm font-bold text-[#1C1817] hover:text-[#8C7047] transition-colors block"
+                >
+                  +91 90262 60421
+                </a>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Love Your Purchase Banner Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-[#FAF7F3] border border-[#E8DFC0]/80 rounded-2xl p-4 sm:p-5 shadow-sm mb-8"
           >
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
               {/* Left Photo */}
@@ -312,61 +357,6 @@ END:VCARD`;
                   <span>REVIEW & EARN REWARDS</span>
                   <Gift className="w-3.5 h-3.5" />
                 </button>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Call Us Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-[#FAF7F3] border border-[#E8DFC0]/80 rounded-2xl p-4 sm:p-5 shadow-sm mb-8"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E5DACD] items-center">
-              {/* Header column */}
-              <div className="sm:col-span-4 flex items-center gap-3 pb-3 sm:pb-0">
-                <div className="w-11 h-11 rounded-full bg-[#EFE6DA] flex items-center justify-center text-[#8C7047] shrink-0">
-                  <PhoneCall className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs sm:text-sm text-[#1C1817]">Call Us</h4>
-                  <p className="text-[11px] text-[#7A6E65]">We are here to help you</p>
-                  <p className="text-[10px] text-[#9E825D] font-medium mt-0.5">Mon - Sat | 10AM - 7PM</p>
-                </div>
-              </div>
-
-              {/* Number 1 */}
-              <div className="sm:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 sm:pt-0 sm:pl-4 text-left sm:text-center">
-                <div>
-                  <a
-                    href="tel:+919919388211"
-                    className="text-xs font-bold text-[#1C1817] hover:text-[#8C7047] transition-colors block"
-                  >
-                    +91 99193 88211
-                  </a>
-                  <span className="text-[10px] text-[#7A6E65] block mt-0.5">Sales Support</span>
-                </div>
-                <div>
-                  <a
-                    href="tel:+918840196009"
-                    className="text-xs font-bold text-[#1C1817] hover:text-[#8C7047] transition-colors block"
-                  >
-                    +91 88401 96009
-                  </a>
-                  <span className="text-[10px] text-[#7A6E65] block mt-0.5">Customer Support</span>
-                </div>
-                <div>
-                  <a
-                    href="https://wa.me/919026260421"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs font-bold text-[#1C1817] hover:text-[#8C7047] transition-colors block"
-                  >
-                    +91 90262 60421
-                  </a>
-                  <span className="text-[10px] text-[#7A6E65] block mt-0.5">WhatsApp Support</span>
-                </div>
               </div>
             </div>
           </motion.div>

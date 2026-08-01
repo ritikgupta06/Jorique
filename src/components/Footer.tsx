@@ -30,21 +30,25 @@ export default function Footer() {
 
           <div className="flex items-center gap-4">
             <a
-              href="#"
+              href="https://instagram.com/thejorique"
+              target="_blank"
+              rel="noreferrer"
               aria-label="Instagram"
               className="p-1.5 text-secondary hover:text-primary transition-colors duration-200"
             >
               <Instagram size={16} strokeWidth={1.5} />
             </a>
             <a
-              href="#"
+              href="https://facebook.com"
+              target="_blank"
+              rel="noreferrer"
               aria-label="Facebook"
               className="p-1.5 text-secondary hover:text-primary transition-colors duration-200"
             >
               <Facebook size={16} strokeWidth={1.5} />
             </a>
             <a
-              href="#"
+              href="mailto:care@jorique.in"
               aria-label="Email"
               className="p-1.5 text-secondary hover:text-primary transition-colors duration-200"
             >
