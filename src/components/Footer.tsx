@@ -6,17 +6,14 @@ export default function Footer() {
     <footer className="bg-white border-t border-border">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 lg:py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <Link to="/" className="text-sm font-semibold tracking-[0.25em] uppercase text-primary">
+          <Link to="/connect" className="text-sm font-semibold tracking-[0.25em] uppercase text-primary">
             JORIQUE
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-8 gap-y-2.5 w-full md:w-auto text-center px-2">
             {[
-              { label: 'Home', href: '/' },
-              { label: 'Shop', href: '/shop' },
-              { label: 'About', href: '/about' },
-              { label: 'Reviews', href: '/reviews' },
-              { label: 'Connect', href: '/connect' },
+              { label: 'Connect Page', href: '/connect' },
+              { label: 'Coming Soon', href: '/' },
             ].map((link) => (
               <Link
                 key={link.href}
@@ -30,18 +27,18 @@ export default function Footer() {
 
           <div className="flex items-center gap-4">
             <a
-              href="https://instagram.com/thejorique"
+              href="https://www.instagram.com/thejorique"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="Instagram"
               className="p-1.5 text-secondary hover:text-primary transition-colors duration-200"
             >
               <Instagram size={16} strokeWidth={1.5} />
             </a>
             <a
-              href="https://facebook.com"
+              href="https://www.facebook.com/people/Thejorique/61591612536766"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="Facebook"
               className="p-1.5 text-secondary hover:text-primary transition-colors duration-200"
             >
@@ -62,7 +59,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} JORIQUE. All rights reserved.
           </p>
           <p className="text-xs text-secondary/60 tracking-wide">
-            Crafted for modern living.
+            Where Comfort Meets Design
           </p>
         </div>
       </div>
