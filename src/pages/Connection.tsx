@@ -478,7 +478,7 @@ END:VCARD`;
               {/* Left Photo - Bedsheet Product Image */}
               <div className="sm:col-span-5 relative rounded-xl overflow-hidden aspect-[4/3] sm:aspect-square w-full shadow-sm">
                 <img
-                  src="/Products/1.jpg"
+                  src="/images/Review_Card.png"
                   alt="JORIQUE Bedsheet Product"
                   className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-500"
                 />
