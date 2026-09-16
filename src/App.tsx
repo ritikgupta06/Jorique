@@ -2,14 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
-import ComingSoon from './pages/ComingSoon';
-import Connection from './pages/Connection';
-
-/* 
-========================================================================
-PAGE IMPORTS (Temporarily commented out for Launch Phase)
-Uncomment these imports when ready to restore full website functionality:
-========================================================================
+// import ComingSoon from './pages/ComingSoon';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
@@ -20,8 +13,8 @@ import Signup from './pages/Signup';
 import VerifyOtp from './pages/VerifyOtp';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import Connection from './pages/Connection';
 import ProtectedRoute from './components/ProtectedRoute';
-*/
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -62,39 +55,15 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* ========================================================================
-            ACTIVE LAUNCH PHASE ROUTES
-            ======================================================================== */}
-        
-        {/* Main Website -> Coming Soon landing page */}
+        {/* Main Website Pages */}
         <Route
           path="/"
           element={
             <PageTransition>
-              <ComingSoon />
+              <Home />
             </PageTransition>
           }
         />
-
-        {/* Connect Page -> Digital Business Card (Live & Functional) */}
-        <Route
-          path="/connect"
-          element={
-            <PageTransition>
-              <Connection />
-            </PageTransition>
-          }
-        />
-
-        {/* Catch-all route: Redirect all other URLs to Coming Soon page during launch phase */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-
-        {/* 
-        ========================================================================
-        FULL WEBSITE ROUTES (Temporarily commented out for launch phase)
-        Uncomment the routes below (and the imports at top) when full website goes live:
-        ========================================================================
-
         <Route
           path="/home"
           element={
@@ -132,6 +101,14 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <Reviews />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/connect"
+          element={
+            <PageTransition>
+              <Connection />
             </PageTransition>
           }
         />
@@ -179,7 +156,21 @@ function AnimatedRoutes() {
             </PageTransition>
           }
         />
+
+        {/* Coming Soon page (commented out) */}
+        {/*
+        <Route
+          path="/coming-soon"
+          element={
+            <PageTransition>
+              <ComingSoon />
+            </PageTransition>
+          }
+        />
         */}
+
+        {/* Catch-all route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
   );

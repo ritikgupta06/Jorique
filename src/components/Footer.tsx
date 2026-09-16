@@ -6,14 +6,17 @@ export default function Footer() {
     <footer className="bg-white border-t border-border">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 lg:py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <Link to="/connect" className="text-sm font-semibold tracking-[0.25em] uppercase text-primary">
+          <Link to="/" className="text-sm font-semibold tracking-[0.25em] uppercase text-primary">
             JORIQUE
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-8 gap-y-2.5 w-full md:w-auto text-center px-2">
             {[
-              { label: 'Connect Page', href: '/connect' },
-              { label: 'Coming Soon', href: '/' },
+              { label: 'Home', href: '/' },
+              { label: 'Shop', href: '/shop' },
+              { label: 'About', href: '/about' },
+              { label: 'Reviews', href: '/reviews' },
+              { label: 'Connect', href: '/connect' },
             ].map((link) => (
               <Link
                 key={link.href}

@@ -4,20 +4,20 @@ import { Heart, User, ShoppingBag, Menu, X, LogOut, ChevronDown, LayoutDashboard
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
-// Active Launch Phase Nav Links
-const navLinks = [
-  { label: 'Connect', href: '/connect' },
-  { label: 'Coming Soon', href: '/' },
-];
-
-/* 
-// FULL WEBSITE NAV LINKS (Uncomment when full site goes live):
+// Full Website Nav Links
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
   { label: 'About', href: '/about' },
   { label: 'Reviews', href: '/reviews' },
   { label: 'Connect', href: '/connect' },
+];
+
+/* 
+// Launch Phase Nav Links (commented out):
+const navLinks = [
+  { label: 'Connect', href: '/connect' },
+  { label: 'Coming Soon', href: '/' },
 ];
 */
 
